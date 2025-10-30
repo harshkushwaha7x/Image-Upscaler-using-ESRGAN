@@ -1,0 +1,35 @@
+# IDE and editors
+.vscode
+.idea
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Model files (PyTorch - not used in TensorFlow version)
+*.pth
+*.t7
+*.caffemodel
+*.mat
+*.npy
+
+# TensorFlow Hub cache (model downloads automatically)
+tfhub_modules/
+
+# Data folders (ignore user images but keep folder structure)
+data/input/*
+data/output/*
+!data/input/.gitkeep
+!data/output/.gitkeep
+
+# Web application temporary files (ignore uploads but keep folder structure)
+web/static/uploads/*
+web/static/results/*
+!web/static/uploads/.gitkeep
+!web/static/results/.gitkeep
+
+# Other file types
+*.svg
+*.bat

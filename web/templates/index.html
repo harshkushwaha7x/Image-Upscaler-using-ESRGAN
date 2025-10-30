@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced ESRGAN Image Upscaler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4f46e5;
+            --primary-light: #6366f1;
+            --primary-dark: #3730a3;
+            --secondary-color: #f8fafc;
+            --accent-color: #06b6d4;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+            backdrop-filter: blur(10px);
+            padding: 4rem 0 2rem;
+            text-align: center;
+            color: white;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            font-weight: 400;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .main-container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+            margin: -2rem auto 2rem;
+            max-width: 900px;
+            overflow: hidden;
+        }
+
+        .upload-section {
+            padding: 3rem;
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drop-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .drop-zone:hover::before {
+            left: 100%;
+        }
+
+        .drop-zone:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .drop-zone.dragover {
+            border-color: var(--accent-color);
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(8, 145, 178, 0.1) 100%);
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+
+        .upload-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .supported-formats {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .format-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .preview-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--secondary-color);
+            border-radius: 12px;
+            display: none;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .image-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            font-size: 0.875rem;
+        }
+
+        .upscale-btn {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border: none;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upscale-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upscale-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 1rem;
+        }
+
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 3px;
+            width: 0%;
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0%, 100% { width: 0%; }
+            50% { width: 70%; }
+        }
+
+        .features-section {
+            padding: 4rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .feature-list li {
+            padding: 0.5rem 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+            font-weight: bold;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #dc2626;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .main-container {
+                margin: -1rem 1rem 2rem;
+            }
+            
+            .upload-section {
+                padding: 2rem 1.5rem;
+            }
+            
+            .drop-zone {
+                padding: 2rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Enhanced ESRGAN Image Upscaler</h1>
+            <p class="hero-subtitle">Transform your low-resolution images into high-resolution masterpieces</p>
+        </div>
+    </div>
+
+    <!-- Main Upload Container -->
+    <div class="container">
+        <div class="main-container">
+            <div class="upload-section">
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger" role="alert">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form action="/upscale" method="post" enctype="multipart/form-data" id="upload-form">
+                    <div class="drop-zone" id="drop-zone">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3 class="upload-title">Drag & Drop or Click to Upload</h3>
+                        <p class="upload-subtitle">Transform your images with AI-powered 4x upscaling</p>
+                        <div class="supported-formats">
+                            <span class="format-badge">JPG</span>
+                            <span class="format-badge">PNG</span>
+                        </div>
+                        <input type="file" name="file" id="file-input" style="display: none;" accept=".jpg,.jpeg,.png">
+                    </div>
+                    
+                    <div class="preview-container" id="preview-container">
+                        <div class="text-center">
+                            <img id="image-preview" class="preview-image" src="#" alt="Preview">
+                            <div class="image-info">
+                                <div>
+                                    <strong id="file-name"></strong>
+                                    <br>
+                                    <small class="text-muted" id="file-size"></small>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="remove-btn">
+                                    <i class="fas fa-trash me-1"></i>Remove
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="upscale-btn" id="submit-btn" disabled>
+                        <i class="fas fa-magic me-2"></i>
+                        Upscale Image
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4 class="feature-title">Enhanced Quality</h4>
+                        <p class="feature-description">Our model has been trained with advanced techniques to produce sharper, more detailed images.</p>
+                        <ul class="feature-list">
+                            <li>Better texture preservation</li>
+                            <li>Improved edge detection</li>
+                            <li>Enhanced color fidelity</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search-plus"></i>
+                        </div>
+                        <h4 class="feature-title">4x Upscaling</h4>
+                        <p class="feature-description">Transform low-resolution images to 4x their original size while maintaining quality.</p>
+                        <ul class="feature-list">
+                            <li>400% increase in resolution</li>
+                            <li>Turn 512×512 into 2048×2048</li>
+                            <li>Perfect for printing or display</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4 class="feature-title">Advanced AI</h4>
+                        <p class="feature-description">Powered by a state-of-the-art ESRGAN model with custom enhancements.</p>
+                        <ul class="feature-list">
+                            <li>Channel attention mechanism</li>
+                            <li>Multi-level feature fusion</li>
+                            <li>Enhanced residual dense blocks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h4>Processing Your Image</h4>
+            <p class="text-muted">This may take a few minutes for large images...</p>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Enhanced file handling with modern UI
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('file-input');
+            const imagePreview = document.getElementById('image-preview');
+            const previewContainer = document.getElementById('preview-container');
+            const removeBtn = document.getElementById('remove-btn');
+            const submitBtn = document.getElementById('submit-btn');
+            const uploadForm = document.getElementById('upload-form');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            const fileName = document.getElementById('file-name');
+            const fileSize = document.getElementById('file-size');
+            
+            // Click on drop zone to select file
+            dropZone.addEventListener('click', function() {
+                fileInput.click();
+            });
+            
+            // Handle drag and drop events
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Visual feedback for drag and drop
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function() {
+                    dropZone.classList.add('dragover');
+                }, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, function() {
+                    dropZone.classList.remove('dragover');
+                }, false);
+            });
+            
+            // Handle dropped files
+            dropZone.addEventListener('drop', function(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length) {
+                    fileInput.files = files;
+                    handleFileSelect();
+                }
+            });
+            
+            // Handle file input change
+            fileInput.addEventListener('change', handleFileSelect);
+            
+            function handleFileSelect() {
+                if (fileInput.files && fileInput.files[0]) {
+                    const file = fileInput.files[0];
+                    
+                    // Check file type
+                    const fileType = file.type;
+                    if (fileType !== 'image/jpeg' && fileType !== 'image/png' && fileType !== 'image/jpg') {
+                        showAlert('Please select a valid image file (JPG, PNG)', 'error');
+                        return;
+                    }
+                    
+                    // Check file size (max 16MB)
+                    if (file.size > 16 * 1024 * 1024) {
+                        showAlert('File size too large. Please select an image smaller than 16MB.', 'error');
+                        return;
+                    }
+                    
+                    // Update file info
+                    fileName.textContent = file.name;
+                    fileSize.textContent = formatFileSize(file.size);
+                    
+                    // Show preview with loading animation
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        imagePreview.src = e.target.result;
+                        previewContainer.style.display = 'block';
+                        submitBtn.disabled = false;
+                        
+                        // Smooth scroll to preview
+                        previewContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // Remove preview with animation
+            removeBtn.addEventListener('click', function() {
+                previewContainer.style.opacity = '0';
+                setTimeout(() => {
+                    fileInput.value = '';
+                    imagePreview.src = '#';
+                    previewContainer.style.display = 'none';
+                    previewContainer.style.opacity = '1';
+                    submitBtn.disabled = true;
+                    fileName.textContent = '';
+                    fileSize.textContent = '';
+                }, 300);
+            });
+            
+            // Enhanced form submission with loading overlay
+            uploadForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!fileInput.files || !fileInput.files[0]) {
+                    showAlert('Please select an image first.', 'error');
+                    return;
+                }
+                
+                // Show loading overlay
+                loadingOverlay.style.display = 'flex';
+                submitBtn.disabled = true;
+                
+                // Submit form
+                this.submit();
+            });
+            
+            // Utility functions
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function showAlert(message, type = 'info') {
+                // Create alert element
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type === 'error' ? 'danger' : 'info'} alert-dismissible fade show`;
+                alert.innerHTML = `
+                    <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // Insert at the top of upload section
+                const uploadSection = document.querySelector('.upload-section');
+                uploadSection.insertBefore(alert, uploadSection.firstChild);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (alert.parentNode) {
+                        alert.remove();
+                    }
+                }, 5000);
+            }
+            
+            // Add some nice animations on load
+            setTimeout(() => {
+                document.querySelector('.main-container').style.transform = 'translateY(0)';
+                document.querySelector('.main-container').style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

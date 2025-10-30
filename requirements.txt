@@ -1,0 +1,41 @@
+# ============================================================================
+# ESRGAN Image Upscaler - Complete Dependencies
+# ============================================================================
+# Python 3.7+ required
+# This file contains all dependencies for both CLI and Web interfaces
+#
+# Installation:
+#   pip install -r requirements.txt
+#
+# For GPU support (CUDA):
+#   pip install tensorflow[and-cuda]
+#   Or visit: https://www.tensorflow.org/install/pip
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Deep Learning Framework
+# ----------------------------------------------------------------------------
+tensorflow>=2.10.0          # Core deep learning framework
+tensorflow-hub>=0.12.0      # Pre-trained model hub
+
+# ----------------------------------------------------------------------------
+# Image Processing Libraries
+# ----------------------------------------------------------------------------
+opencv-python>=4.8.0        # Computer vision and image I/O
+numpy>=1.24.0               # Numerical computing
+Pillow>=10.0.0              # Additional image processing
+
+# ----------------------------------------------------------------------------
+# Web Application Framework (for web interface)
+# ----------------------------------------------------------------------------
+Flask==3.0.0                # Web framework
+Werkzeug==3.0.1             # WSGI utility library
+
+# ============================================================================
+# Notes:
+# ============================================================================
+# - CLI usage (test.py): Only requires tensorflow, tensorflow-hub, opencv-python, numpy
+# - Web interface: Requires all dependencies listed above
+# - GPU acceleration: Install tensorflow[and-cuda] for NVIDIA GPU support
+# - Memory: Minimum 4GB RAM recommended, 8GB+ for large images
+# ============================================================================
