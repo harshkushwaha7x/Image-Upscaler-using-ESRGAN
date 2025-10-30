@@ -252,15 +252,11 @@ def cleanup_files():
             'message': str(e)
         }), 500
 
+logger.info("Initializing ESRGAN Web Interface...")
+load_model()
+
 if __name__ == '__main__':
-    # Make sure model is loaded
-    logger.info("Starting Enhanced ESRGAN Web Interface...")
-    model_loaded = load_model()
-    
-    if model_loaded:
-        logger.info("Model loaded successfully!")
-    else:
-        logger.warning("Model not loaded - will load on first request")
+    logger.info("Starting Flask development server...")
     
     # Use PORT environment variable for deployment platforms (Render, Heroku, etc.)
     # Fallback to WEB_PORT (5000) for local development
