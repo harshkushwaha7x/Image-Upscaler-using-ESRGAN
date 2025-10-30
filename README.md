@@ -200,39 +200,37 @@ Error: TensorFlow OOM (Out of Memory)
 
 ## 🚀 Deployment
 
-### Deploy to Render (Recommended)
+### Deploy to Railway (Recommended)
 
-This project is configured for one-click deployment to Render:
+[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
 
-[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy)
+**Quick Deploy:**
 
-**Manual Deployment Steps:**
+1. Push your code to GitHub
+2. Go to [railway.app](https://railway.app)
+3. Click "New Project" → "Deploy from GitHub repo"
+4. Select your repository
+5. Railway automatically deploys your app
+6. Access your app at the provided URL
 
-1. **Push to GitHub**:
-   ```bash
-   git add .
-   git commit -m "Prepare for deployment"
-   git push origin main
-   ```
+**For detailed deployment instructions, see [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)**
 
-2. **Deploy on Render**:
-   - Go to [render.com](https://render.com) and sign up/login
-   - Click "New +" → "Web Service"
-   - Connect your GitHub repository
-   - Render will auto-detect `render.yaml` and configure everything
-   - Click "Create Web Service"
+**Key Features:**
+- ✅ Free tier available ($5 credit/month)
+- ✅ Automatic HTTPS
+- ✅ Easy GitHub integration
+- ✅ Auto-deployments on push
+- ✅ Built-in monitoring
 
-3. **Wait for deployment** (~5-10 minutes for first deploy)
-   - Model will download automatically on first request
-   - Your app will be live at `https://your-app-name.onrender.com`
+**Other Deployment Options:**
+- Render.com
+- Heroku
+- Google Cloud Run
+- AWS Elastic Beanstalk
+- DigitalOcean App Platform
+- Self-hosted VPS
 
-**Configuration:**
-- Free tier: 750 hours/month (enough for hobby projects)
-- Automatic HTTPS included
-- Auto-deploy on git push
-- Health checks enabled via `/api/status`
-
-**Note**: First request after inactivity may take 30-60 seconds (cold start on free tier).
+See [DOCUMENTATION.md](DOCUMENTATION.md) for all deployment options.
 
 ## 📄 License
 

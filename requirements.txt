@@ -30,8 +30,7 @@ Pillow>=10.0.0              # Additional image processing
 # ----------------------------------------------------------------------------
 Flask==3.0.0                # Web framework
 Werkzeug==3.0.1             # WSGI utility library
-gunicorn>=21.2.0            # Production WSGI server (Linux/Mac only)
-waitress>=2.1.2             # Production WSGI server (Windows-compatible)
+gunicorn>=21.2.0            # Production WSGI server
 
 # ============================================================================
 # Notes:

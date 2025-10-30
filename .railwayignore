@@ -1,0 +1,21 @@
+# Files to ignore during Railway deployment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.vscode/
+.idea/
+*.log
+.DS_Store
+.env.local
+.env.*.local
+
+# User data (not needed in deployment)
+data/input/*
+data/output/*
+web/static/uploads/*
+web/static/results/*
+
+# Keep .gitkeep files
+!.gitkeep

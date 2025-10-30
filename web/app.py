@@ -1,11 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 import os
 import uuid
-
-# Force CPU-only mode BEFORE importing TensorFlow to prevent CUDA errors
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Reduce TensorFlow logging
-
 import numpy as np
 import cv2
 import tensorflow as tf
@@ -17,6 +12,7 @@ import logging
 from datetime import datetime
 
 app = Flask(__name__)
+# Use environment variable for secret key in production, fallback to random for development
 app.secret_key = os.environ.get('SECRET_KEY', str(uuid.uuid4()))
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 app.config['RESULTS_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'results')
@@ -257,14 +253,17 @@ def cleanup_files():
             'message': str(e)
         }), 500
 
-logger.info("Initializing ESRGAN Web Interface...")
-load_model()
-
 if __name__ == '__main__':
-    logger.info("Starting Flask development server...")
+    # Make sure model is loaded
+    logger.info("Starting Enhanced ESRGAN Web Interface...")
+    model_loaded = load_model()
     
-    # Use PORT environment variable for deployment platforms (Render, Heroku, etc.)
-    # Fallback to WEB_PORT (5000) for local development
+    if model_loaded:
+        logger.info("Model loaded successfully!")
+    else:
+        logger.warning("Model not loaded - will load on first request")
+    
+    # Use PORT environment variable for deployment platforms (Railway, Heroku, etc.)
     port = int(os.environ.get('PORT', WEB_PORT))
     logger.info(f"Server starting on http://0.0.0.0:{port}")
     app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
