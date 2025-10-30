@@ -11,6 +11,10 @@ from PIL import Image
 import logging
 from datetime import datetime
 
+# Force CPU-only mode to prevent CUDA errors on platforms without GPU
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+tf.config.set_visible_devices([], 'GPU')
+
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', str(uuid.uuid4()))
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
