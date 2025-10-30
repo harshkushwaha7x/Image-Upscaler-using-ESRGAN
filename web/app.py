@@ -1,6 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
 import os
 import uuid
+
+# Force CPU-only mode BEFORE importing TensorFlow to prevent CUDA errors
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Reduce TensorFlow logging
+
 import numpy as np
 import cv2
 import tensorflow as tf
@@ -10,10 +15,6 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 import logging
 from datetime import datetime
-
-# Force CPU-only mode to prevent CUDA errors on platforms without GPU
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
-tf.config.set_visible_devices([], 'GPU')
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', str(uuid.uuid4()))
