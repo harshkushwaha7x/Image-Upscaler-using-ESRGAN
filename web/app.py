@@ -38,6 +38,15 @@ os.environ["TFHUB_DOWNLOAD_PROGRESS"] = "True"
 # Load the model
 model = None
 
+# Try to preload model when module is imported (for Gunicorn)
+def preload_model():
+    """Preload model when application starts (called by Gunicorn)"""
+    try:
+        logger.info("Preloading ESRGAN model...")
+        load_model()
+    except Exception as e:
+        logger.warning(f"Model preload failed: {e}. Will load on first request.")
+
 def load_model():
     global model
     if model is None:
@@ -65,6 +74,12 @@ def load_model():
             return False
     
     return True
+
+# Preload model when module is imported (for Gunicorn --preload)
+try:
+    preload_model()
+except Exception as e:
+    logger.warning(f"Initial model load failed: {e}")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
