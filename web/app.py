@@ -12,8 +12,7 @@ import logging
 from datetime import datetime
 
 app = Flask(__name__)
-# Use environment variable for secret key in production, fallback to random for development
-app.secret_key = os.environ.get('SECRET_KEY', str(uuid.uuid4()))
+app.secret_key = str(uuid.uuid4())
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 app.config['RESULTS_FOLDER'] = os.path.join(os.path.dirname(__file__), 'static', 'results')
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload size
@@ -37,15 +36,6 @@ os.environ["TFHUB_DOWNLOAD_PROGRESS"] = "True"
 
 # Load the model
 model = None
-
-# Try to preload model when module is imported (for Gunicorn)
-def preload_model():
-    """Preload model when application starts (called by Gunicorn)"""
-    try:
-        logger.info("Preloading ESRGAN model...")
-        load_model()
-    except Exception as e:
-        logger.warning(f"Model preload failed: {e}. Will load on first request.")
 
 def load_model():
     global model
@@ -74,12 +64,6 @@ def load_model():
             return False
     
     return True
-
-# Preload model when module is imported (for Gunicorn --preload)
-try:
-    preload_model()
-except Exception as e:
-    logger.warning(f"Initial model load failed: {e}")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -276,9 +260,7 @@ if __name__ == '__main__':
     if model_loaded:
         logger.info("Model loaded successfully!")
     else:
-        logger.warning("Model not loaded - will load on first request")
+        logger.warning("Model not loaded - will produce random outputs")
     
-    # Use PORT environment variable for deployment platforms (Railway, Heroku, etc.)
-    port = int(os.environ.get('PORT', WEB_PORT))
-    logger.info(f"Server starting on http://0.0.0.0:{port}")
-    app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
+    logger.info(f"Server starting on http://0.0.0.0:{WEB_PORT}")
+    app.run(host='0.0.0.0', port=WEB_PORT, debug=False, threaded=True)

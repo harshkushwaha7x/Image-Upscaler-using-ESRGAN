@@ -198,40 +198,6 @@ Error: TensorFlow OOM (Out of Memory)
 - Check GPU availability with `/api/status` endpoint (web) or verify GPU detection
 - Smaller images process faster
 
-## 🚀 Deployment
-
-### Deploy to Railway (Recommended)
-
-[![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/new)
-
-**Quick Deploy:**
-
-1. Push your code to GitHub
-2. Go to [railway.app](https://railway.app)
-3. Click "New Project" → "Deploy from GitHub repo"
-4. Select your repository
-5. Railway automatically deploys your app
-6. Access your app at the provided URL
-
-**For detailed deployment instructions, see [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)**
-
-**Key Features:**
-- ✅ Free tier available ($5 credit/month)
-- ✅ Automatic HTTPS
-- ✅ Easy GitHub integration
-- ✅ Auto-deployments on push
-- ✅ Built-in monitoring
-
-**Other Deployment Options:**
-- Render.com
-- Heroku
-- Google Cloud Run
-- AWS Elastic Beanstalk
-- DigitalOcean App Platform
-- Self-hosted VPS
-
-See [DOCUMENTATION.md](DOCUMENTATION.md) for all deployment options.
-
 ## 📄 License
 
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
