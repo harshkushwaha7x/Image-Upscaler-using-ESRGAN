@@ -4,13 +4,41 @@
 
 The deployment was failing because:
 
-1. **Healthcheck Timeout**: Railway's healthcheck was timing out before the app could start
-2. **Model Loading**: The ESRGAN model (~20MB) takes time to download on first deployment
-3. **Gunicorn Configuration**: The app wasn't configured properly for Gunicorn's preload mode
+1. **Missing System Libraries**: OpenCV requires `libGL.so.1` which isn't available in Railway's environment
+2. **Wrong OpenCV Package**: `opencv-python` includes GUI dependencies not needed for servers
+3. **Healthcheck Timeout**: Railway's healthcheck was timing out before the app could start
+4. **Model Loading**: The ESRGAN model (~20MB) takes time to download on first deployment
+5. **Gunicorn Configuration**: The app wasn't configured properly for Gunicorn's preload mode
 
 ## What Was Fixed
 
-### 1. Updated `railway.json`
+### 1. Fixed OpenCV Dependencies ✨ CRITICAL FIX
+
+**Problem:** 
+```
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+```
+
+**Solution:**
+
+**a) Changed to headless OpenCV in `requirements.txt`:**
+```python
+# Before:
+opencv-python>=4.8.0
+
+# After:
+opencv-python-headless>=4.8.0  # No GUI dependencies
+```
+
+**b) Created `nixpacks.toml`:**
+```toml
+[phases.setup]
+nixPkgs = ["python310", "gcc", "libGL"]
+```
+
+This ensures Railway installs the required system libraries.
+
+### 2. Updated `railway.json`
 
 **Changes:**
 - Changed healthcheck path from `/api/status` to `/` (simpler, faster)
