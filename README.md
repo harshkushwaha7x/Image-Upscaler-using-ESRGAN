@@ -11,9 +11,15 @@
 ---
 
 <p align="center">
-  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN"><img src="https://img.shields.io/github/last-commit/harshkushwaha7x/Image-Upscaler-Using-ESRGAN-Tensorflow?style=flat-square" alt="last commit"></a>
-  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN"><img src="https://img.shields.io/github/languages/top/harshkushwaha7x/Image-Upscaler-Using-ESRGAN-Tensorflow?style=flat-square" alt="languages"></a>
-  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square" alt="license" /></a>
+  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN">
+    <img src="https://img.shields.io/github/last-commit/harshkushwaha7x/Image-Upscaler-using-ESRGAN?style=flat-square" alt="last commit">
+  </a>
+  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN">
+    <img src="https://img.shields.io/github/languages/top/harshkushwaha7x/Image-Upscaler-using-ESRGAN?style=flat-square" alt="languages">
+  </a>
+  <a href="https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN/blob/main/LICENSE">
+    <img src="https://img.shields.io/badge/license-Apache%202.0-blue?style=flat-square" alt="license" />
+  </a>
   <img src="https://img.shields.io/badge/version-1.0.0-success?style=flat-square" alt="version" />
 </p>
 
