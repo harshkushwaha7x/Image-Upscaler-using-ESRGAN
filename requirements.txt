@@ -31,6 +31,11 @@ Pillow>=10.0.0              # Additional image processing
 Flask==3.0.0                # Web framework
 Werkzeug==3.0.1             # WSGI utility library
 
+# ----------------------------------------------------------------------------
+# Production Web Server (optional, for deployment)
+# ----------------------------------------------------------------------------
+gunicorn>=21.2.0            # WSGI HTTP server for production deployment
+
 # ============================================================================
 # Notes:
 # ============================================================================
@@ -38,5 +43,5 @@ Werkzeug==3.0.1             # WSGI utility library
 # - Web interface: Requires all dependencies listed above
 # - GPU acceleration: Install tensorflow[and-cuda] for NVIDIA GPU support
 # - Memory: Minimum 4GB RAM recommended, 8GB+ for large images
+# - Production: Use gunicorn instead of Flask development server
 # ============================================================================
-gunicorn>=21.2.0

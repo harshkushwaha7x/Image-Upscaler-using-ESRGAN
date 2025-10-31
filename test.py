@@ -57,15 +57,44 @@ os.environ["TFHUB_DOWNLOAD_PROGRESS"] = "True"
 print('=' * 70)
 print('ESRGAN Image Upscaler - TensorFlow 2 Edition')
 print('=' * 70)
+
+# ============================================================================
+# Input Validation
+# ============================================================================
+
+# Check if input folder exists and contains images before loading model
+if not os.path.exists('data/input'):
+    print('\n✗ Error: Input folder "data/input" does not exist!')
+    print('Please create the folder and add images to process.')
+    exit(1)
+
+# Check for images in input folder
+input_images = glob.glob(test_img_folder)
+if not input_images:
+    print('\n✗ Error: No images found in "data/input" folder!')
+    print('Please add JPG or PNG images to process.')
+    exit(1)
+
+print(f'\nFound {len(input_images)} image(s) to process')
+
+# ============================================================================
+# Model Loading
+# ============================================================================
+
 print('\nLoading ESRGAN model from TensorFlow Hub...')
 print(f'Model URL: {MODEL_URL}')
 print('Note: Model (~20MB) will be downloaded automatically on first run...\n')
 
-# Load the pre-trained ESRGAN model from TensorFlow Hub
-# The model is cached locally after first download
-model = hub.load(MODEL_URL)
+try:
+    # Load the pre-trained ESRGAN model from TensorFlow Hub
+    # The model is cached locally after first download
+    model = hub.load(MODEL_URL)
+    print('✓ Model loaded successfully!')
+except Exception as e:
+    print(f'\n✗ Error loading model: {str(e)}')
+    print('Please check your internet connection and try again.')
+    exit(1)
 
-print('✓ Model loaded successfully!')
 print('\nStarting image processing...\n')
 
 # ============================================================================
@@ -80,81 +109,97 @@ total_time = 0
 os.makedirs(output_folder, exist_ok=True)
 
 # Process each image in the input folder
-for path in glob.glob(test_img_folder):
+for path in input_images:
     idx += 1
     base = osp.splitext(osp.basename(path))[0]
     print(f'{idx}. Processing: {base}')
     
-    # ========================================================================
-    # Image Preprocessing
-    # ========================================================================
-    
-    # Read image file and decode to tensor
-    # TensorFlow automatically detects image format (JPG/PNG)
-    img = tf.image.decode_image(tf.io.read_file(path))
-    
-    # Handle PNG images with alpha channel (transparency)
-    # ESRGAN model expects RGB images, so we remove the alpha channel
-    if img.shape[-1] == 4:
-        img = img[..., :-1]  # Keep only RGB channels, discard alpha
-    
-    # Ensure image dimensions are divisible by 4
-    # This is a requirement of the ESRGAN architecture
-    hr_size = (tf.convert_to_tensor(img.shape[:-1]) // 4) * 4
-    img = tf.image.crop_to_bounding_box(img, 0, 0, hr_size[0], hr_size[1])
-    
-    # Convert image to float32 format (required by model)
-    # Pixel values remain in [0, 255] range
-    img = tf.cast(img, tf.float32)
-    
-    # Add batch dimension [height, width, channels] -> [1, height, width, channels]
-    # Model expects batched input even for single images
-    img = tf.expand_dims(img, 0)
-    
-    # ========================================================================
-    # Super Resolution Inference
-    # ========================================================================
-    
-    # Measure processing time for performance tracking
-    start_time = time.time()
-    
-    # Perform super-resolution upscaling (4x)
-    # Model outputs tensor with 4x dimensions
-    output = model(img)
-    
-    # Calculate elapsed time
-    elapsed = time.time() - start_time
-    total_time += elapsed
-    
-    # ========================================================================
-    # Post-processing
-    # ========================================================================
-    
-    # Remove batch dimension [1, height, width, channels] -> [height, width, channels]
-    output = tf.squeeze(output)
-    
-    # Clip pixel values to valid range [0, 255]
-    # Neural networks can sometimes produce values outside this range
-    output = tf.clip_by_value(output, 0, 255)
-    
-    # Convert back to uint8 format and convert to NumPy array
-    output = tf.cast(output, tf.uint8).numpy()
-    
-    # Convert from RGB (TensorFlow) to BGR (OpenCV) color space
-    # OpenCV uses BGR format for image I/O operations
-    output = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
-    
-    # ========================================================================
-    # Save Output Image
-    # ========================================================================
-    
-    # Construct output file path with '_rlt' suffix
-    output_path = os.path.join(output_folder, f'{base}_rlt.png')
-    
-    # Save upscaled image as PNG (lossless format)
-    cv2.imwrite(output_path, output)
-    
-    print(f'   ✓ Saved: {base}_rlt.png (Time: {elapsed:.2f}s)\n')
+    try:
+        # ====================================================================
+        # Image Preprocessing
+        # ====================================================================
+        
+        # Read image file and decode to tensor
+        # TensorFlow automatically detects image format (JPG/PNG)
+        img = tf.image.decode_image(tf.io.read_file(path))
+        
+        # Handle PNG images with alpha channel (transparency)
+        # ESRGAN model expects RGB images, so we remove the alpha channel
+        if img.shape[-1] == 4:
+            img = img[..., :-1]  # Keep only RGB channels, discard alpha
+        
+        # Ensure image dimensions are divisible by 4
+        # This is a requirement of the ESRGAN architecture
+        hr_size = (tf.convert_to_tensor(img.shape[:-1]) // 4) * 4
+        
+        # Validate image dimensions
+        if hr_size[0] < 4 or hr_size[1] < 4:
+            print(f'   ✗ Error: Image too small (minimum 4x4 pixels required)')
+            print(f'   Skipping {base}\n')
+            continue
+        
+        img = tf.image.crop_to_bounding_box(img, 0, 0, hr_size[0], hr_size[1])
+        
+        # Convert image to float32 format (required by model)
+        # Pixel values remain in [0, 255] range
+        img = tf.cast(img, tf.float32)
+        
+        # Add batch dimension [height, width, channels] -> [1, height, width, channels]
+        # Model expects batched input even for single images
+        img = tf.expand_dims(img, 0)
+        
+        # ====================================================================
+        # Super Resolution Inference
+        # ====================================================================
+        
+        # Measure processing time for performance tracking
+        start_time = time.time()
+        
+        # Perform super-resolution upscaling (4x)
+        # Model outputs tensor with 4x dimensions
+        output = model(img)
+        
+        # Calculate elapsed time
+        elapsed = time.time() - start_time
+        total_time += elapsed
+        
+        # ====================================================================
+        # Post-processing
+        # ====================================================================
+        
+        # Remove batch dimension [1, height, width, channels] -> [height, width, channels]
+        output = tf.squeeze(output)
+        
+        # Clip pixel values to valid range [0, 255]
+        # Neural networks can sometimes produce values outside this range
+        output = tf.clip_by_value(output, 0, 255)
+        
+        # Convert back to uint8 format and convert to NumPy array
+        output = tf.cast(output, tf.uint8).numpy()
+        
+        # Convert from RGB (TensorFlow) to BGR (OpenCV) color space
+        # OpenCV uses BGR format for image I/O operations
+        output = cv2.cvtColor(output, cv2.COLOR_RGB2BGR)
+        
+        # ====================================================================
+        # Save Output Image
+        # ====================================================================
+        
+        # Construct output file path with '_rlt' suffix
+        output_path = os.path.join(output_folder, f'{base}_rlt.png')
+        
+        # Save upscaled image as PNG (lossless format)
+        success = cv2.imwrite(output_path, output)
+        
+        if success:
+            print(f'   ✓ Saved: {base}_rlt.png (Time: {elapsed:.2f}s)\n')
+        else:
+            print(f'   ✗ Error: Failed to save {base}_rlt.png\n')
+            
+    except Exception as e:
+        print(f'   ✗ Error processing {base}: {str(e)}')
+        print(f'   Skipping this image\n')
+        continue
 
 # ============================================================================
 # Summary Statistics
