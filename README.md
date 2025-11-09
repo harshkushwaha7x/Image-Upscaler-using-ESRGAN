@@ -139,8 +139,8 @@ ESRGAN-Image-Upscaler/
 
 ### Installation
 ```bash
-git clone https://github.com/harshkushwaha7x/Image-Upscaler-Using-ESRGAN-Tensorflow.git
-cd Image-Upscaler-Using-ESRGAN-Tensorflow
+git clone https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN.git
+cd Image-Upscaler-using-ESRGAN
 ```
 
 #### Install Dependencies
