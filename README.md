@@ -4,7 +4,7 @@
 
 **ESRGAN Image Upscaler** is a cutting-edge image enhancement platform built using advanced AI technologies. It includes an intuitive user interface, fast processing, and seamless integration for upscaling images by 4x — ideal for photographers, designers, and content creators.
 
-[Live Demo](#) • [Portfolio](https://harshkushwaha7x.github.io/Portflio.2/) • [GitHub](https://github.com/harshkushwaha7x)
+[Live Demo](#) • [Portfolio](https://portflio-3.vercel.app/) • [GitHub](https://github.com/harshkushwaha7x)
 
 </div>
 
@@ -403,7 +403,7 @@ If you use this project in your research, please cite the original ESRGAN paper:
 
 ## 📬 Contact
 **Harsh Kushwaha** — Developer & Maintainer  
-- Portfolio: https://harshkushwaha7x.github.io/Portflio.2/  
+- Portfolio: https://portflio-3.vercel.app/
 - GitHub: https://github.com/harshkushwaha7x  
 - LinkedIn: https://www.linkedin.com/in/harsh-kushwaha-7x
 - Email: harshkushwaha4151@gmail.com
