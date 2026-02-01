@@ -1,10 +1,10 @@
 <div align="center">
 
-# ESRGAN Image Upscaler 🖼️
+# ESRGAN Image Upscaler
 
 **ESRGAN Image Upscaler** is a cutting-edge image enhancement platform built using advanced AI technologies. It includes an intuitive user interface, fast processing, and seamless integration for upscaling images by 4x — ideal for photographers, designers, and content creators.
 
-[Live Demo](#) • [Portfolio](https://portflio-3.vercel.app/) • [GitHub](https://github.com/harshkushwaha7x)
+[Live Demo](#) • [Portfolio](https://portfolio-harsh7x.vercel.app/) • [GitHub](https://github.com/harshkushwaha7x)
 
 </div>
 
@@ -27,40 +27,40 @@
 
 ---
 
-## 🧠 Overview
+## Overview
 **ESRGAN Image Upscaler** is a production-ready AI-powered image enhancement platform that enables users to upscale images by 4x while maintaining high perceptual quality in real time.  
 It combines **Enhanced Super-Resolution GAN**, **TensorFlow 2**, and **modern web technologies** to deliver seamless and scalable performance.  
 
 Core highlights:
-- 🎯 **4x Image Upscaling**: Transform low-resolution images to 4x their original size  
-- 🤖 **AI-Powered Enhancement**: ESRGAN model for high-quality super-resolution  
-- 💻 **Dual Interface**: CLI for batch processing and web UI for interactive use  
-- ⚡ **GPU Acceleration**: Automatic GPU detection and utilization  
-- 🌐 **Modern Web UI**: Flask-based interface with drag-and-drop support  
+- **4x Image Upscaling**: Transform low-resolution images to 4x their original size  
+- **AI-Powered Enhancement**: ESRGAN model for high-quality super-resolution  
+- **Dual Interface**: CLI for batch processing and web UI for interactive use  
+- **GPU Acceleration**: Automatic GPU detection and utilization  
+- **Modern Web UI**: Flask-based interface with drag-and-drop support  
 
 ---
 
-## 🚀 Key Features
+## Key Features
 
-### 🤖 AI-Powered Upscaling
+### AI-Powered Upscaling
 - Enhanced Super-Resolution GAN (ESRGAN) for perceptual quality  
 - TensorFlow Hub pre-trained model (~20MB)  
 - Real-time image processing with progress tracking  
 - Automatic model download on first run  
 
-### 💻 Dual Interface
+### Dual Interface
 - Command-line tool for batch processing  
 - Modern web interface with drag-and-drop upload  
 - Side-by-side before/after comparison  
 - Full-screen image modal view  
 
-### 🖼️ Image Processing
+### Image Processing
 - JPG and PNG format support  
 - Alpha channel handling for transparent images  
 - Automatic dimension validation (divisible by 4)  
 - High-quality PNG output  
 
-### ⚡ Performance
+### Performance
 - GPU acceleration with CUDA support  
 - Automatic CPU fallback  
 - Efficient tensor operations  
@@ -68,7 +68,7 @@ Core highlights:
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 ### AI & Deep Learning
 - TensorFlow 2.10+  
@@ -95,7 +95,7 @@ Core highlights:
 
 ---
 
-## 🧩 Architecture
+## Architecture
 ```text
 ESRGAN-Image-Upscaler/
 ├── test.py                # CLI script (177 lines)
@@ -128,7 +128,7 @@ ESRGAN-Image-Upscaler/
 
 ---
 
-## 🧰 Getting Started
+## Getting Started
 
 ### Prerequisites
 - Python 3.7+
@@ -179,7 +179,7 @@ python start_server.py
 
 ---
 
-## 🧠 AI Capabilities
+## AI Capabilities
 - **ESRGAN Model**: Enhanced Super-Resolution Generative Adversarial Network  
 - **4x Upscaling**: Increases image resolution by 400%  
 - **Perceptual Quality**: Optimized for visual quality rather than pixel accuracy  
@@ -188,7 +188,7 @@ python start_server.py
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Main Routes
 - `GET /` - Main upload interface
@@ -215,7 +215,7 @@ python start_server.py
 
 ---
 
-## 📖 Detailed Usage
+## Detailed Usage
 
 ### Command-Line Interface
 
@@ -267,7 +267,7 @@ Average time per image: 2.73s
 
 ---
 
-## ⚡ Performance
+## Performance
 
 ### Processing Speed
 
@@ -287,7 +287,7 @@ Average time per image: 2.73s
 
 ---
 
-## 🔧 Configuration
+## Configuration
 
 ### GPU Acceleration
 ```bash
@@ -308,7 +308,7 @@ export MAX_UPLOAD_SIZE=16777216  # 16MB
 
 ---
 
-## ☁️ Deployment
+## Deployment
 
 ### Development
 ```bash
@@ -335,7 +335,7 @@ CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:5000", "--timeout", "300", "web.app:a
 
 ---
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Model Download Failed
 ```
@@ -364,7 +364,7 @@ Error: TensorFlow OOM (Out of Memory)
 
 ---
 
-## 🤝 Contributing
+## Contributing
 1. Fork this repository  
 2. Create a feature branch (`git checkout -b feature-name`)  
 3. Commit changes (`git commit -m "Add new feature"`)  
@@ -372,12 +372,12 @@ Error: TensorFlow OOM (Out of Memory)
 
 ---
 
-## 🪪 License
+## License
 This project is licensed under the **Apache License 2.0** — see [LICENSE](https://github.com/harshkushwaha7x/Image-Upscaler-using-ESRGAN/blob/main/LICENSE).
 
 ---
 
-## 🙏 Credits
+## Credits
 
 - **Original ESRGAN Research:** [xinntao/ESRGAN](https://github.com/xinntao/ESRGAN)
 - **TensorFlow 2 Model:** [TensorFlow Hub - ESRGAN](https://tfhub.dev/captain-pool/esrgan-tf2/1)
@@ -385,7 +385,7 @@ This project is licensed under the **Apache License 2.0** — see [LICENSE](http
 
 ---
 
-## 📚 Citation
+## Citation
 
 If you use this project in your research, please cite the original ESRGAN paper:
 
@@ -401,9 +401,9 @@ If you use this project in your research, please cite the original ESRGAN paper:
 
 ---
 
-## 📬 Contact
+## Contact
 **Harsh Kushwaha** — Developer & Maintainer  
-- Portfolio: https://portflio-3.vercel.app/
+- Portfolio: https://portfolio-harsh7x.vercel.app/
 - GitHub: https://github.com/harshkushwaha7x  
 - LinkedIn: https://www.linkedin.com/in/harsh-kushwaha-7x
 - Email: harshkushwaha4151@gmail.com
@@ -412,6 +412,6 @@ If you use this project in your research, please cite the original ESRGAN paper:
 
 <div align="center">
 
-**ESRGAN Image Upscaler** – Enhance Your Images with AI 🚀  
+**ESRGAN Image Upscaler** – Enhance Your Images with AI  
 Built by <b>Harsh Kushwaha</b>
 </div>
